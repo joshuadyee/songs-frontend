@@ -1,4 +1,5 @@
 import { SongsIndex } from "./SongsIndex"
+import { SongsNew } from "./SongsNew"
 import axios from "axios"
 import { useState, useEffect } from "react"
 
@@ -19,11 +20,19 @@ export function Content() {
       })
     }
 
+    const handleCreateSong = (params) => {
+      console.log("handleCreateSong", params)
+      axios.post("http://localhost:3000/songs.json", params).then(response => {
+        setSongs([...songs, response.data])
+      })
+    }
+
     useEffect(handleSongsIndex, [])
 
   return (
     <div>
       <SongsIndex songs={songs}/>
+      <SongsNew onCreateSong={handleCreateSong}/>
     </div>
   )
 }

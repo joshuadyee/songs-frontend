@@ -1,7 +1,10 @@
 import { SongsIndex } from "./SongsIndex"
 import { SongsNew } from "./SongsNew"
+// import { SongsShow } from "./SongsShow"
+import { Modal } from "./Modal"
 import axios from "axios"
 import { useState, useEffect } from "react"
+import { SongsShow } from "./SongsShow"
 
 export function Content() {
 
@@ -12,10 +15,14 @@ export function Content() {
 
     const [songs, setSongs] = useState([])
 
+    const [isSongsShowVisible, setIsSongsShowVisible] = useState(false)
+
+    const [currentSong, setCurrentSong] = useState({})
+
     const handleSongsIndex = () => {
       console.log("songs index")
       axios.get("http://localhost:3000/songs.json").then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         setSongs(response.data)
       })
     }
@@ -27,12 +34,26 @@ export function Content() {
       })
     }
 
+    const handleShowSong = song => {
+      console.log("showing song", song)
+      setIsSongsShowVisible(true)
+      setCurrentSong(song)
+    }
+
+    const handleClose = () => {
+      // console.log("handle close")
+      setIsSongsShowVisible(false)
+    }
+
     useEffect(handleSongsIndex, [])
 
   return (
     <div>
-      <SongsIndex songs={songs}/>
+      <SongsIndex songs={songs} onShowSong={handleShowSong}/>
       <SongsNew onCreateSong={handleCreateSong}/>
+      <Modal show={isSongsShowVisible} onClose={handleClose}>
+        <SongsShow song={currentSong}/>
+      </Modal>
     </div>
   )
 }

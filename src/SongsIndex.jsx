@@ -8,6 +8,7 @@ export function SongsIndex(props) {
           <p>{song.artist}</p>
           <p>{song.album}</p>
           <p>{song.year}</p>
+          <button onClick={() => props.onShowSong(song)}>More info</button>
           <hr />
         </div>
       ))}

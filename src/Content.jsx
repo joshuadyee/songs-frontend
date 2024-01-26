@@ -1,10 +1,11 @@
+import { WelcomePage } from "./WelcomePage"
 import { SongsIndex } from "./SongsIndex"
 import { SongsNew } from "./SongsNew"
-// import { SongsShow } from "./SongsShow"
+import { SongsShow } from "./SongsShow"
 import { Modal } from "./Modal"
 import axios from "axios"
 import { useState, useEffect } from "react"
-import { SongsShow } from "./SongsShow"
+import { Routes, Route } from "react-router-dom"
 
 export function Content() {
 
@@ -45,14 +46,34 @@ export function Content() {
       setIsSongsShowVisible(false)
     }
 
+    const handleUpdateSong = (id, params) => {
+      console.log("updating song", params)
+      axios.patch(`http://localhost:3000/songs/${id}.json`, params).then(response => {
+        setSongs(
+          songs.map(song => {
+            if (song.id === response.data.id) {
+              return response.data
+            } else {
+              return song 
+            }
+          })
+        )
+        handleClose()
+      })
+    }
+
     useEffect(handleSongsIndex, [])
 
   return (
     <div>
-      <SongsIndex songs={songs} onShowSong={handleShowSong}/>
-      <SongsNew onCreateSong={handleCreateSong}/>
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/songs/index" element={<SongsIndex songs={songs} onShowSong={handleShowSong}/>}/>
+        <Route path="/songs/new" element={<SongsNew onCreateSong={handleCreateSong}/>}/>
+      </Routes>
+      
       <Modal show={isSongsShowVisible} onClose={handleClose}>
-        <SongsShow song={currentSong}/>
+        <SongsShow song={currentSong} onUpdateSong={handleUpdateSong}/>
       </Modal>
     </div>
   )
